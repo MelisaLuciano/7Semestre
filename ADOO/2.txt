@@ -1,0 +1,151 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.mycompany.dentiweb.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mycompany.dentiweb.modeloBase.Conexion;
+import com.mycompany.dentiweb.modeloBase.Doctor;
+
+/**
+ *
+ * @author cesar
+ */
+public class DoctorDAO {
+    private final Conexion con;
+    private Connection connection;
+    
+    public DoctorDAO(String jdbcURL, String jdbcUsername, String jdbcPassword) throws SQLException {
+        System.out.println(jdbcURL);
+        con = new Conexion (jdbcURL, jdbcUsername, jdbcPassword);
+    }
+    
+    //Crear un nuevo doctor
+    public boolean insertarDoctor(Doctor doctor) throws SQLException {
+        String sql = "INSERT INTO Doctor (ID_Doctor, Nombre, ApellidoP, ApellidoM, FechaNacimiento, Genero, CedulaProfesional, Correo, Password, TelefonoFijo, Celular) VALUES (?, ?, ?, ?, ?, ?, ?, ?, AES_ENCRYPT(?,'Q2HE4D8RNT29CL3'), ?, ?)";
+        System.out.println(doctor.getNombre());
+        con.Conectar();
+        connection = con.getJdbcConnection();
+        
+        boolean rowInsert;
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, null);
+            statement.setString(2, doctor.getNombre());
+            statement.setString(3, doctor.getApellidoP());
+            statement.setString(4, doctor.getApellidoM());
+            statement.setString(5, doctor.getFechaNacimiento());
+            statement.setString(6, doctor.getGenero());
+            statement.setString(7, doctor.getCedulaProfesional());
+            statement.setString(8, doctor.getCorreo());
+            statement.setString(9, doctor.getPassword());
+            statement.setString(10, doctor.getTelefonoFijo());
+            statement.setString(11, doctor.getCelular());
+            rowInsert = statement.executeUpdate() > 0;
+        }
+        
+        con.Desconectar();
+        return rowInsert;
+    }
+    
+    //Listar todos los doctores
+    public List<Doctor> listarDoctores() throws SQLException {
+        List<Doctor> ListaDoctores = new ArrayList<>();
+        
+        String sql = "SELECT * FROM Doctores";
+        con.Conectar();
+        connection = con.getJdbcConnection();
+        Statement statement = connection.createStatement();
+        ResultSet resulSet = statement.executeQuery(sql);
+        
+        while (resulSet.next()){
+            int ID_Doctor = resulSet.getInt("ID_Doctor");
+            String Nombre = resulSet.getString("nombre");
+            String ApellidoP = resulSet.getString("apellidoP");
+            String ApellidoM = resulSet.getString("apellidoM");
+            String FechaNacimiento = resulSet.getString("fechaNacimiento");
+            String Genero = resulSet.getString("genero");
+            String CedulaProfesional = resulSet.getString("cedulaProfesional");
+            String Correo = resulSet.getString("correo");
+            String Password = resulSet.getString("password");
+            String TelefonoFijo = resulSet.getString("telefonoFijo");
+            String Celular = resulSet.getString("celular");
+            Doctor doctor = new Doctor(ID_Doctor, Nombre, ApellidoP, ApellidoM, FechaNacimiento, Genero, CedulaProfesional, Correo, Password, TelefonoFijo, Celular);
+            ListaDoctores.add(doctor);           
+        }
+        
+        con.Desconectar();
+        return ListaDoctores;
+    }
+    
+    //Obtener ID
+    public Doctor obtenerPorID(int ID_Doctor) throws SQLException {
+        Doctor doctor = null;
+        
+        String sql = "SELECT * FROM Doctor WHERE ID_Doctor = ?";
+        con.Conectar();
+        connection = con.getJdbcConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, ID_Doctor);
+        
+        try (ResultSet res = statement.executeQuery()) {
+            if (res.next()) {
+                doctor = new Doctor(res.getInt("ID_Doctor"), res.getString("nombre"), res.getString("apellidoP"), res.getString("apellidoM"), res.getString("fechaNacimiento"), res.getString("genero"), res.getString("cedulaProfesional"), res.getString("correo"), res.getString("password"), res.getString("telefonoFijo"), res.getString("celular"));            
+            }
+        }
+        
+        con.Desconectar();
+        return doctor;
+    }
+    
+    //Actualizar Doctor
+    public boolean actualizarDoctor(Doctor doctor) throws SQLException {
+        boolean rowActualizar;
+        String sql = "UPDATE Doctor SET Nombre = ?, ApellidoP = ?, ApellidoM = ?, FechaNacimiento = ?, Genero = ?, CedulaProfesional = ?, Correo = ?, Password = AES_ENCRYPT(?,'Q2HE4D8RNT29CL3'), TelefonoFijo = ?, Celular = ?, WHERE ID_Consultorio = ?";
+        con.Conectar();
+        connection = con.getJdbcConnection();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, doctor.getNombre());
+            //System.out.println(consultorio.getConsultorio());
+            statement.setString(2, doctor.getApellidoP());
+            statement.setString(3, doctor.getApellidoM());
+            statement.setString(4, doctor.getFechaNacimiento());
+            statement.setString(5, doctor.getGenero());
+            statement.setString(6, doctor.getCedulaProfesional());
+            statement.setString(7, doctor.getCorreo());
+            statement.setString(8, doctor.getPassword());
+            statement.setString(9, doctor.getTelefonoFijo());
+            statement.setString(10, doctor.getCelular());
+            statement.setInt(11, doctor.getID_Doctor());
+            rowActualizar = statement.executeUpdate() > 0;
+        }
+        
+        con.Desconectar();
+        return rowActualizar;
+    }
+    
+    //Eliminar Doctor
+    public boolean eliminarDoctor(Doctor doctor) throws SQLException {
+        boolean rowEliminar;
+        String sql = "DELETE FROM Doctor WHERE ID_Doctor = ?";
+        con.Conectar();
+        connection = con.getJdbcConnection();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, doctor.getID_Doctor());
+            rowEliminar = statement.executeUpdate() > 0;
+        }
+        
+        con.Desconectar();
+        return rowEliminar;
+    }
+}

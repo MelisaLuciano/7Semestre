@@ -1,0 +1,155 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.mycompany.dentiweb.controller;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.mycompany.dentiweb.dao.DoctorDAO;
+import com.mycompany.dentiweb.modeloBase.Doctor;
+
+/**
+ *
+ * @author cesar
+ */
+@WebServlet ("/adminDoctor")
+public class AdminDoctor extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    DoctorDAO doctorDAO;
+    
+    @Override
+    public void init() {
+        String jdbcURL = getServletContext().getInitParameter("jdbcURL");
+        String jdbcUsername = getServletContext().getInitParameter("jdbcUsername");
+        String jdbcPassword = getServletContext().getInitParameter("jdbcPassword");
+        try {
+            doctorDAO = new DoctorDAO(jdbcURL, jdbcUsername, jdbcPassword); 
+        } catch (SQLException e) {
+            
+        }
+    }
+    
+    /**
+     * @see HttpServlet#HttpSrvlet()
+     */
+    public AdminDoctor() {
+        super();
+    }
+    
+    /**
+     * @param request
+     * @param response
+     * @throws javax.servlet.ServletException
+     * @throws java.io.IOException
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("Hola servlet...");
+        String action = request.getParameter("action");
+        System.out.println(action);
+        try {
+            switch (action) {
+                case "index":
+                    index(request, response);
+                    break;
+                case "nuevoDoctor":
+                    nuevoDoctor(request, response); //Muestra jsp para crear Doctor
+                    break;
+                case "registerDoctor":
+                    System.out.println("entro");
+                    registrarDoctor(request, response); //Registra un nuevo doctor en la base de datos
+                    break;
+                case "mostrarDoctor":
+                    mostrarDoctor(request, response);
+                    break;
+                case "showeditDoctor":
+                    showEditarDoctor(request, response);
+                    break;
+                case "editarDoctor":
+                    editarDoctor(request, response);
+                    break;
+                case "eliminarDoctor":
+                    eliminarDoctor(request, response);
+                    break;
+                default:
+                    break;
+            }
+        } catch (SQLException e) {
+            e.getStackTrace();
+        }
+    }
+    
+    /**
+     * @param request
+     * @param response
+     * @throws javax.servlet.ServletException
+     * @throws java.io.IOException
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     *
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("Hola servlet...");
+        doGet(request, response);
+    }
+    
+    private void index(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        //mostrar(request, response);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    private void registrarDoctor(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        Doctor doctor = new Doctor(0, request.getParameter("nombre"), request.getParameter("apellidoP"), request.getParameter("apellidoM"), request.getParameter("fechaNacimiento"), request.getParameter("genero"), request.getParameter("cedulaProfesional"), request.getParameter("correo"), request.getParameter("password"), request.getParameter("telefonoFijo"), request.getParameter("celular"));
+        doctorDAO.insertarDoctor(doctor);
+        
+        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    private void nuevoDoctor(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/registrar/registerDoctor.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    private void mostrarDoctor(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/vista/mostrarDoctor.jsp");
+        List<Doctor> listaDoctores = doctorDAO.listarDoctores();
+        request.setAttribute("lista", listaDoctores);
+        dispatcher.forward(request, response);
+    }
+    
+    private void showEditarDoctor(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        Doctor doctor = doctorDAO.obtenerPorID(Integer.parseInt(request.getParameter("ID_Doctor")));
+        request.setAttribute("doctor", doctor);
+        
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/vista/editarDoctor.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+    private void editarDoctor(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        Doctor doctor = new Doctor((Integer.parseInt(request.getParameter("ID_Doctor"))), request.getParameter("nombre"), request.getParameter("apellidoP"), request.getParameter("apellidoM"), request.getParameter("fechaNacimiento"), request.getParameter("genero"), request.getParameter("cedulaProfesional"), request.getParameter("correo"), request.getParameter("password"), request.getParameter("telefonoFijo"), request.getParameter("celular"));
+        doctorDAO.actualizarDoctor(doctor);
+        index(request, response);
+    }
+    
+    private void eliminarDoctor(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        Doctor doctor = doctorDAO.obtenerPorID(Integer.parseInt(request.getParameter("ID_Doctor")));
+        doctorDAO.eliminarDoctor(doctor);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+        dispatcher.forward(request, response);
+    }
+    
+}

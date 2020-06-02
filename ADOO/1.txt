@@ -1,0 +1,126 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.mycompany.dentiweb.modeloBase;
+
+/**
+ *
+ * @author cesar
+ */
+public class Doctor {
+    private int ID_Doctor;
+    private String Nombre;
+    private String ApellidoP;
+    private String ApellidoM;
+    private String FechaNacimiento;
+    private String Genero;
+    private String CedulaProfesional;
+    private String Correo;
+    private String Password;
+    private String TelefonoFijo;
+    private String Celular;
+    
+    public Doctor(int ID_Doctor, String Nombre, String ApellidoP, String ApellidoM, String FechaNacimiento, String Genero, String CedulaProfesional, String Correo, String Password, String TelefonoFijo, String Celular) {
+        this.ID_Doctor = ID_Doctor;
+        this.Nombre = Nombre;
+        this.ApellidoP = ApellidoP;
+        this.ApellidoM = ApellidoM;
+        this.FechaNacimiento = FechaNacimiento;
+        this.Genero = Genero;
+        this.CedulaProfesional = CedulaProfesional;
+        this.Correo = Correo;
+        this.Password = Password;
+        this.TelefonoFijo = TelefonoFijo;
+        this.Celular = Celular;
+    }
+    
+    public int getID_Doctor() {
+        return ID_Doctor;
+    }
+    
+    public void setID_Doctor(int ID_Doctor) {
+        this.ID_Doctor = ID_Doctor;
+    }
+    
+    public String getNombre() {
+        return Nombre;
+    }
+    
+    public void setNombre(String Nombre) {
+        this.Nombre = Nombre;
+    }
+    
+    public String getApellidoP() {
+        return ApellidoP;
+    }
+    
+    public void setApellidoP(String ApellidoP) {
+        this.ApellidoP = ApellidoP;
+    }
+    
+    public String getApellidoM() {
+        return ApellidoM;
+    }
+    
+    public void setApellidoM(String ApellidoM) {
+        this.ApellidoM = ApellidoM;
+    }
+    
+    public String getFechaNacimiento() {
+        return FechaNacimiento;
+    }
+    
+    public void setFechaNacimiento(String FechaNacimiento) {
+        this.FechaNacimiento = FechaNacimiento;
+    }
+    
+    public String getGenero() {
+        return Genero;
+    }
+    
+    public void setGenero(String Genero) {
+        this.Genero = Genero;
+    }
+    
+    public String getCedulaProfesional() {
+        return CedulaProfesional;
+    }
+    
+    public void setCedulaProfesional(String CedulaProfesional) {
+        this.CedulaProfesional = CedulaProfesional;
+    }
+    
+    public String getCorreo() {
+        return CedulaProfesional;
+    }
+    
+    public void setCorreo(String Correo) {
+        this.Correo = Correo;
+    }
+    
+    public String getPassword() {
+        return Password;
+    }
+    
+    public void setPassword(String Password) {
+        this.Password = Password;
+    }
+    
+    public String getTelefonoFijo() {
+        return TelefonoFijo;
+    }
+    
+    public void setTelefonoFijo(String TelefonoFijo) {
+        this.TelefonoFijo = TelefonoFijo;
+    }
+    
+    public String getCelular() {
+        return Celular;
+    }
+    
+    public void setCelular(String Celular) {
+        this.Celular = Celular;
+    }
+}
